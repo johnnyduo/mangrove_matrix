@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     minify: 'esbuild', // Use esbuild instead of terser for faster builds
     rollupOptions: {
+      external: [], // Don't externalize any dependencies
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
@@ -28,5 +29,7 @@ export default defineConfig(({ mode }) => ({
         }
       }
     },
+    target: 'es2020', // Support BigInt literals and modern JS features
+    chunkSizeWarningLimit: 1024, // Suppress chunk size warnings
   },
 }));

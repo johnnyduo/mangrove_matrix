@@ -1,8 +1,12 @@
 {
-  "buildCommand": "npm install && npm run build",
+  "buildCommand": "npm ci --force && npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "installCommand": "npm install",
+  "installCommand": "npm ci --force",
+  "env": {
+    "NODE_ENV": "production",
+    "VITE_BUILD_TARGET": "vercel"
+  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
