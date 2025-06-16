@@ -437,24 +437,10 @@ export const MapCanvas = ({ onRegionClick, selectedRegion }: MapCanvasProps) => 
       
       {/* Clean Data Status Indicator */}
       <div className="absolute top-4 right-4 z-10">
-        {isLoading ? (
+        {isLoading && (
           <div className="bg-blue-900/90 text-white px-3 py-2 rounded-lg text-sm backdrop-blur-sm flex items-center">
             <div className="animate-spin mr-2 h-4 w-4 border-2 border-blue-100 border-t-transparent rounded-full"></div>
             Loading mangrove data...
-          </div>
-        ) : (
-          <div className="bg-green-900/80 text-green-100 px-3 py-2 rounded-lg text-sm backdrop-blur-sm">
-            <div className="flex items-center">
-              <div className="h-2 w-2 bg-green-400 rounded-full mr-2"></div>
-              <span className="font-semibold">MangroveMatrix</span>
-            </div>
-            <div className="text-xs mt-1 opacity-80">
-              {dataSource === 'full' 
-                ? '50K real GMW features' 
-                : dataSource === 'sample' 
-                  ? 'Sample dataset loaded' 
-                  : 'Demo data loaded'}
-            </div>
           </div>
         )}
       </div>

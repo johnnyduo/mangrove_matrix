@@ -1,7 +1,7 @@
 // Contract addresses and configuration
 export const CONTRACT_CONFIG = {
-  // OP Sepolia USDC Token - Verified address
-  USDC_ADDRESS: "0xf0E7410525D28d642c367530Add29931826071eC", // Correct USDC contract on OP Sepolia
+  // OP Sepolia USDC Token - Updated address with no faucet cooldown
+  USDC_ADDRESS: "0xFa081F90a1dbB9ceEeB910fa7966D2BA0e5EE0A2", // New USDC contract on OP Sepolia
   FUNDING_ADDRESS: "0x344a5E8DC5f256c49a1F6b38EE40cDE2f4C03012", // Mock funding address for demo
   
   // For basic staking, we'll use the contract owner address

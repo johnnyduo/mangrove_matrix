@@ -9,32 +9,24 @@ export const useFaucet = () => {
   const [faucetAmount, setFaucetAmount] = useState<string>('1000.00');
   const [contractService] = useState(() => new ContractService());
 
-  // Check cooldown time
+  // Check cooldown time (disabled for testing)
   useEffect(() => {
     if (isConnected && address) {
-      checkCooldown();
-      
-      // Set up interval to update countdown
-      const interval = setInterval(() => {
-        setTimeUntilNextClaim(prev => Math.max(0, prev - 1));
-      }, 1000);
-
-      return () => clearInterval(interval);
+      getFaucetInfo();
     }
   }, [isConnected, address]);
 
-  const checkCooldown = async () => {
+  const getFaucetInfo = async () => {
     if (!address) return;
     
     try {
       await contractService.initialize();
-      const timeLeft = await contractService.getTimeUntilNextClaim(address);
       const amount = await contractService.getFaucetAmount();
       
-      setTimeUntilNextClaim(timeLeft);
+      setTimeUntilNextClaim(0); // No cooldown
       setFaucetAmount(amount);
     } catch (error) {
-      console.warn('Failed to check faucet status:', error);
+      console.warn('Failed to get faucet info:', error);
     }
   };
 
@@ -43,18 +35,14 @@ export const useFaucet = () => {
       return { success: false, message: 'Please connect your wallet first' };
     }
 
-    if (timeUntilNextClaim > 0) {
-      return { success: false, message: 'Please wait for cooldown period to end' };
-    }
-
     setIsLoading(true);
     
     try {
       await contractService.initialize();
       const tx = await contractService.claimFaucet();
       
-      // Update cooldown immediately (24 hours)
-      setTimeUntilNextClaim(24 * 60 * 60); // 24 hours in seconds
+      // No cooldown - can claim again immediately
+      setTimeUntilNextClaim(0);
       
       return { 
         success: true, 
@@ -91,10 +79,10 @@ export const useFaucet = () => {
   return {
     claimFaucet,
     isLoading,
-    timeUntilNextClaim,
+    timeUntilNextClaim: 0, // No cooldown
     faucetAmount,
-    canClaim: timeUntilNextClaim === 0 && isConnected,
-    formatTimeRemaining: () => formatTimeRemaining(timeUntilNextClaim),
+    canClaim: isConnected, // Can always claim when connected
+    formatTimeRemaining: () => '', // No time remaining
     isConnected
   };
 };

@@ -71,13 +71,8 @@ contract TestUSDC {
         _mint(to, amount);
     }
     
-    // Faucet function - anyone can get 1000 USDC every 24 hours
+    // Faucet function - anyone can get 1000 USDC instantly (no cooldown for testing)
     function faucet() public {
-        require(
-            block.timestamp >= lastMintTime[msg.sender] + FAUCET_COOLDOWN,
-            "Please wait 24 hours between faucet requests"
-        );
-        
         lastMintTime[msg.sender] = block.timestamp;
         _mint(msg.sender, FAUCET_AMOUNT);
     }

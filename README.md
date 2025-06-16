@@ -73,7 +73,7 @@
 ## 🌐 Blockchain Details
 
 - **Network**: Optimism Sepolia (Chain ID: 11155420)
-- **Token**: USDC (Contract: `0xf0E7410525D28d642c367530Add29931826071eC`)
+- **Token**: USDC (Contract: `0xFa081F90a1dbB9ceEeB910fa7966D2BA0e5EE0A2`)
 - **Explorer**: [OP Sepolia Etherscan](https://sepolia-optimistic.etherscan.io)
 - **Wallet Support**: All major wallets via WalletConnect v3
 - **Transaction Type**: Direct USDC transfers for mangrove funding
