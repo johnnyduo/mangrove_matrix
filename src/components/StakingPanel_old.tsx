@@ -22,7 +22,7 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
   
   // USDC contract address on Optimism Sepolia testnet
   // Note: For demo purposes, we're using a mock address. In production, use the actual USDC contract address
-  const USDC_CONTRACT_ADDRESS = '0xf0E7410525D28d642c367530Add29931826071eC';
+  const USDC_CONTRACT_ADDRESS = '0xFa081F90a1dbB9ceEeB910fa7966D2BA0e5EE0A2';
   const USDC_ABI = [
     // ERC20 balanceOf function
     'function balanceOf(address owner) view returns (uint256)',
