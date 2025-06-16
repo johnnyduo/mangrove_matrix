@@ -1,11 +1,18 @@
 {
-  "buildCommand": "npm ci --force && npm run build",
+  "buildCommand": "npm ci --force && npm run build:vercel",
   "outputDirectory": "dist",
   "framework": "vite",
   "installCommand": "npm ci --force",
   "env": {
     "NODE_ENV": "production",
-    "VITE_BUILD_TARGET": "vercel"
+    "VITE_BUILD_TARGET": "vercel",
+    "ESBUILD_BINARY_PATH": "/usr/bin/esbuild"
+  },
+  "build": {
+    "env": {
+      "NODE_ENV": "production",
+      "NODE_OPTIONS": "--max_old_space_size=4096"
+    }
   },
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }

@@ -8,10 +8,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:vercel": "NODE_ENV=production vite build --minify=esbuild",
     "build:dev": "vite build --mode development", 
     "lint": "eslint .",
     "preview": "vite preview",
-    "postinstall": "npm ls @rollup/rollup-linux-x64-gnu > /dev/null 2>&1 || npm install @rollup/rollup-linux-x64-gnu@latest --no-save || true"
+    "postinstall": "echo 'Dependencies installed successfully'"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -73,14 +74,12 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
-    "@rollup/rollup-linux-x64-gnu": "^4.24.4",
-    "@rollup/rollup-darwin-x64": "^4.24.4",
-    "@rollup/rollup-win32-x64-msvc": "^4.24.4",
+    "@rollup/rollup-darwin-arm64": "^4.24.4",
     "@tailwindcss/typography": "^0.5.15",
     "@types/node": "^22.5.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react-swc": "^3.5.0",
+    "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
