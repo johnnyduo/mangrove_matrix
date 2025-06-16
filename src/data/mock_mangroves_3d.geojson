@@ -1,0 +1,105 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sundarbans Reserve",
+        "health_index": 0.85,
+        "area_hectares": 10000,
+        "country": "Bangladesh",
+        "protection_level": "high"
+      },
+      "geometry": {
+        "type": "Polygon3D",
+        "coordinates": [[
+          [ -100.789, 13.789, 2337.857 ],
+          [ -99.789, 13.789, 2337.857 ],
+          [ -99.789, 14.789, 2347.857 ],
+          [ -100.789, 14.789, 2347.857 ],
+          [ -100.789, 13.789, 2337.857 ]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Everglades National Park",
+        "health_index": 0.72,
+        "area_hectares": 6000,
+        "country": "USA",
+        "protection_level": "medium"
+      },
+      "geometry": {
+        "type": "Polygon3D",
+        "coordinates": [[
+          [ 579.099, 2672.099, 2672.099 ],
+          [ 580.099, 2672.099, 2672.099 ],
+          [ 580.099, 2673.099, 2673.099 ],
+          [ 579.099, 2673.099, 2673.099 ],
+          [ 579.099, 2672.099, 2672.099 ]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Amazon Delta Mangroves",
+        "health_index": 0.68,
+        "area_hectares": 8500,
+        "country": "Brazil",
+        "protection_level": "low"
+      },
+      "geometry": {
+        "type": "Polygon3D",
+        "coordinates": [[
+          [ 3142.099, -2342.099, -2342.099 ],
+          [ 3143.099, -2342.099, -2342.099 ],
+          [ 3143.099, -2341.099, -2341.099 ],
+          [ 3142.099, -2341.099, -2341.099 ],
+          [ 3142.099, -2342.099, -2342.099 ]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Coral Triangle Mangroves",
+        "health_index": 0.91,
+        "area_hectares": 12000,
+        "country": "Indonesia",
+        "protection_level": "high"
+      },
+      "geometry": {
+        "type": "Polygon3D",
+        "coordinates": [[
+          [ 2342.099, -1342.099, -1342.099 ],
+          [ 2343.099, -1342.099, -1342.099 ],
+          [ 2343.099, -1341.099, -1341.099 ],
+          [ 2342.099, -1341.099, -1341.099 ],
+          [ 2342.099, -1342.099, -1342.099 ]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Red Sea Mangroves",
+        "health_index": 0.77,
+        "area_hectares": 3500,
+        "country": "Saudi Arabia",
+        "protection_level": "medium"
+      },
+      "geometry": {
+        "type": "Polygon3D",
+        "coordinates": [[
+          [ 1342.099, 1342.099, 1342.099 ],
+          [ 1343.099, 1342.099, 1342.099 ],
+          [ 1343.099, 1343.099, 1343.099 ],
+          [ 1342.099, 1343.099, 1343.099 ],
+          [ 1342.099, 1342.099, 1342.099 ]
+        ]]
+      }
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sundarbans Reserve",
+        "health_index": 0.85,
+        "area_hectares": 10000,
+        "country": "Bangladesh",
+        "protection_level": "high"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [89.0, 21.5],
+          [90.0, 21.5],
+          [90.0, 22.5],
+          [89.0, 22.5],
+          [89.0, 21.5]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Everglades National Park",
+        "health_index": 0.72,
+        "area_hectares": 6000,
+        "country": "USA",
+        "protection_level": "medium"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-81.5, 25.0],
+          [-80.0, 25.0],
+          [-80.0, 26.0],
+          [-81.5, 26.0],
+          [-81.5, 25.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Amazon Delta Mangroves",
+        "health_index": 0.68,
+        "area_hectares": 8500,
+        "country": "Brazil",
+        "protection_level": "low"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-51.0, -2.0],
+          [-49.0, -2.0],
+          [-49.0, -1.0],
+          [-51.0, -1.0],
+          [-51.0, -2.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Coral Triangle Mangroves",
+        "health_index": 0.91,
+        "area_hectares": 12000,
+        "country": "Indonesia",
+        "protection_level": "high"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [139.0, -9.0],
+          [141.0, -9.0],
+          [141.0, -8.0],
+          [139.0, -8.0],
+          [139.0, -9.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Red Sea Mangroves",
+        "health_index": 0.77,
+        "area_hectares": 3500,
+        "country": "Saudi Arabia",
+        "protection_level": "medium"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [37.0, 19.5],
+          [39.0, 19.5],
+          [39.0, 20.5],
+          [37.0, 20.5],
+          [37.0, 19.5]
+        ]]
+      }
+    }
+  ]
+}

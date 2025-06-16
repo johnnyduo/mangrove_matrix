@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "PXLVAL": 1,
+        "Name": "Sample Mangrove 1",
+        "Country": "Indonesia",
+        "Area_Ha": 125.5,
+        "healthIndex": 85,
+        "floodProtection": 7.2,
+        "carbonSequestration": 145.8,
+        "biodiversityIndex": 8.1,
+        "economicValue": 52300
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [106.8456, -6.2088],
+          [106.8556, -6.2088],
+          [106.8556, -6.1988],
+          [106.8456, -6.1988],
+          [106.8456, -6.2088]
+        ]]
+      }
+    },
+    {
+      "type": "Feature", 
+      "properties": {
+        "PXLVAL": 1,
+        "Name": "Sample Mangrove 2",
+        "Country": "Philippines",
+        "Area_Ha": 89.3,
+        "healthIndex": 72,
+        "floodProtection": 6.8,
+        "carbonSequestration": 198.2,
+        "biodiversityIndex": 7.9,
+        "economicValue": 41200
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [121.0244, 14.5995],
+          [121.0344, 14.5995],
+          [121.0344, 14.6095],
+          [121.0244, 14.6095],
+          [121.0244, 14.5995]
+        ]]
+      }
+    }
+  ]
+}

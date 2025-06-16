@@ -1,0 +1,215 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sundarbans Reserve",
+        "health_index": 0.85,
+        "area_hectares": 10000,
+        "country": "Bangladesh",
+        "protection_level": "high",
+        "flood_protection_m": 4.15,
+        "carbon_sequestration_tpy": 22.71,
+        "biodiversity_index": 0.59,
+        "economic_value_usdpy": 235415,
+        "health": 0.9
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              89,
+              21.5
+            ],
+            [
+              90,
+              21.5
+            ],
+            [
+              90,
+              22.5
+            ],
+            [
+              89,
+              22.5
+            ],
+            [
+              89,
+              21.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Everglades National Park",
+        "health_index": 0.72,
+        "area_hectares": 6000,
+        "country": "USA",
+        "protection_level": "medium",
+        "flood_protection_m": 2.97,
+        "carbon_sequestration_tpy": 73.74,
+        "biodiversity_index": 0.99,
+        "economic_value_usdpy": 96981,
+        "health": 0.54
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -81.5,
+              25
+            ],
+            [
+              -80,
+              25
+            ],
+            [
+              -80,
+              26
+            ],
+            [
+              -81.5,
+              26
+            ],
+            [
+              -81.5,
+              25
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Amazon Delta Mangroves",
+        "health_index": 0.68,
+        "area_hectares": 8500,
+        "country": "Brazil",
+        "protection_level": "low",
+        "flood_protection_m": 2.48,
+        "carbon_sequestration_tpy": 62.48,
+        "biodiversity_index": 0.54,
+        "economic_value_usdpy": 221694,
+        "health": 0.64
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -51,
+              -2
+            ],
+            [
+              -49,
+              -2
+            ],
+            [
+              -49,
+              -1
+            ],
+            [
+              -51,
+              -1
+            ],
+            [
+              -51,
+              -2
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Coral Triangle Mangroves",
+        "health_index": 0.91,
+        "area_hectares": 12000,
+        "country": "Indonesia",
+        "protection_level": "high",
+        "flood_protection_m": 3.85,
+        "carbon_sequestration_tpy": 76.01,
+        "biodiversity_index": 0.9,
+        "economic_value_usdpy": 112349,
+        "health": 0.69
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              139,
+              -9
+            ],
+            [
+              141,
+              -9
+            ],
+            [
+              141,
+              -8
+            ],
+            [
+              139,
+              -8
+            ],
+            [
+              139,
+              -9
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Red Sea Mangroves",
+        "health_index": 0.77,
+        "area_hectares": 3500,
+        "country": "Saudi Arabia",
+        "protection_level": "medium",
+        "flood_protection_m": 2.63,
+        "carbon_sequestration_tpy": 71.62,
+        "biodiversity_index": 0.87,
+        "economic_value_usdpy": 182724,
+        "health": 0.89
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              37,
+              19.5
+            ],
+            [
+              39,
+              19.5
+            ],
+            [
+              39,
+              20.5
+            ],
+            [
+              37,
+              20.5
+            ],
+            [
+              37,
+              19.5
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
