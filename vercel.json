@@ -1,8 +1,8 @@
 {
-  "buildCommand": "npm ci --force && npm run build:vercel",
+  "buildCommand": "yarn build:vercel",
   "outputDirectory": "dist",
   "framework": "vite",
-  "installCommand": "npm ci --force",
+  "installCommand": "yarn install",
   "env": {
     "NODE_ENV": "production",
     "VITE_BUILD_TARGET": "vercel",
