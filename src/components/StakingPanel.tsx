@@ -4,14 +4,16 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ChevronRight, ChevronLeft, Coins, TrendingUp, Leaf, MapPin, AlertCircle, CheckCircle, Clock, ExternalLink } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Coins, TrendingUp, MapPin, AlertCircle, CheckCircle, Clock, ExternalLink } from 'lucide-react';
 import { useAccount, useBalance, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseUnits } from 'viem';
 import { optimismSepolia } from 'wagmi/chains';
 import { MangroveRegion } from '@/types';
 import { contractService } from '@/lib/contractService';
-import { CONTRACT_CONFIG, USDC_ABI } from '@/lib/contracts';
+import { CONTRACT_CONFIG, USDC_ABI, STAKING_ABI } from '@/lib/contracts';
 import { StakingInfoCard } from './StakingInfoCard';
+import { StakingDiagnostic } from './StakingDiagnostic';
+import { useMangroveStaking } from '@/hooks/use-mangrove-staking';
 
 interface StakingPanelProps {
   isOpen: boolean;
@@ -21,6 +23,16 @@ interface StakingPanelProps {
 
 export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelProps) => {
   const { address, isConnected } = useAccount();
+  
+  // Use the MangroveStaking hook for real staking functionality
+  const {
+    stakingData,
+    approveUSDC,
+    stakeUSDC,
+    needsApproval,
+    isPending: isStakingPending,
+    isConfirming: isStakingConfirming
+  } = useMangroveStaking();
   
   // Get USDC balance with automatic refresh
   const { data: usdcBalance, error: usdcError, isLoading: usdcLoading, refetch: refetchBalance } = useBalance({
@@ -32,12 +44,6 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
     }
   });
   
-  // Contract interaction hooks
-  const { writeContract, data: hash, isPending, error: writeError } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash,
-  });
-  
   const [stakeAmount, setStakeAmount] = useState('');
   const [stakedAmount, setStakedAmount] = useState('0.00'); // This would be fetched from contract
   const [carbonCredits, setCarbonCredits] = useState('0.00'); // This would be fetched from contract
@@ -45,13 +51,13 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
   const [txError, setTxError] = useState<string | null>(null);
   const [lastBalanceUpdate, setLastBalanceUpdate] = useState<Date | null>(null);
 
-  // Handle transaction errors with better UX
+  // Handle staking transaction errors
   useEffect(() => {
-    if (writeError) {
-      setTxError(writeError.message || 'Transaction failed');
+    // Error handling is now managed by the staking hook
+    if (txError) {
       setTimeout(() => setTxError(null), 5000); // Clear error after 5 seconds
     }
-  }, [writeError]);
+  }, [txError]);
 
   // Update last balance update time when balance changes
   useEffect(() => {
@@ -60,34 +66,15 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
     }
   }, [usdcBalance, usdcLoading]);
 
-  // Handle successful transaction with better UX
+  // Handle successful staking completion - now managed by staking hook
   useEffect(() => {
-    if (isConfirmed && hash) {
-      setShowSuccess(true);
-      
-      // Refresh balance after successful transaction
-      refetchBalance();
-      
-      // Update local state to simulate successful staking
-      const newStaked = parseFloat(stakedAmount.replace(/,/g, '')) + parseFloat(stakeAmount);
-      const newCredits = parseFloat(carbonCredits) + (parseFloat(stakeAmount) * 0.025);
-      
-      setStakedAmount(newStaked.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }));
-      
-      setCarbonCredits(newCredits.toFixed(2));
-      setStakeAmount('');
-      
-      // Hide success message after 10 seconds
-      setTimeout(() => setShowSuccess(false), 10000);
-    }
-  }, [isConfirmed, hash, stakeAmount, stakedAmount, carbonCredits, refetchBalance]);
+    // The staking hook handles transaction success/failure
+    // UI updates are handled through the StakingInfoCard component
+  }, []);
 
-  // Format USDC balance for display
-  const displayBalance = usdcBalance && !usdcError ? 
-    `${parseFloat(usdcBalance.formatted).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC` : 
+  // Format USDC balance for display - use data from staking hook
+  const displayBalance = stakingData.usdcBalance && !usdcError ? 
+    `${parseFloat(stakingData.usdcBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC` : 
     usdcLoading ? 'Loading...' :
     usdcError ? `Error: ${usdcError.message || 'Unknown error'}` :
     '0.00 USDC';
@@ -140,18 +127,40 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
     setShowSuccess(false);
     
     try {
-      // Convert stake amount to wei (USDC has 6 decimals)
-      const amountInWei = parseUnits(stakeAmount, CONTRACT_CONFIG.USDC_DECIMALS);
+      // Default to region 1 for now (could be made dynamic based on selectedRegion)
+      const regionId = 1;
       
-      // Transfer USDC to owner address (basic staking)
-      writeContract({
-        address: CONTRACT_CONFIG.USDC_ADDRESS as `0x${string}`,
-        abi: USDC_ABI,
-        functionName: 'transfer',
-        args: [CONTRACT_CONFIG.OWNER_ADDRESS as `0x${string}`, amountInWei],
-        chain: optimismSepolia,
-        account: address,
-      });
+      // Check if we need to approve USDC first
+      if (needsApproval(stakeAmount)) {
+        // Step 1: Approve USDC
+        const approveResult = await approveUSDC(stakeAmount);
+        if (!approveResult.success) {
+          setTxError(approveResult.message);
+          return;
+        }
+        
+        // Wait a moment for approval to be processed, then stake
+        setTimeout(async () => {
+          const stakeResult = await stakeUSDC(regionId, stakeAmount);
+          if (stakeResult.success) {
+            setShowSuccess(true);
+            setStakeAmount('');
+            setTimeout(() => setShowSuccess(false), 10000);
+          } else {
+            setTxError(stakeResult.message);
+          }
+        }, 3000);
+      } else {
+        // Direct stake if already approved
+        const stakeResult = await stakeUSDC(regionId, stakeAmount);
+        if (stakeResult.success) {
+          setShowSuccess(true);
+          setStakeAmount('');
+          setTimeout(() => setShowSuccess(false), 10000);
+        } else {
+          setTxError(stakeResult.message);
+        }
+      }
       
     } catch (error) {
       setTxError(error instanceof Error ? error.message : 'Staking failed. Please try again.');
@@ -222,21 +231,25 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
             <CardHeader className="pb-3">
               <CardTitle className="text-white text-lg flex items-center">
                 <TrendingUp className="w-5 h-5 mr-2 text-green-400" />
-                Pool Stats
+                Staking Stats
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-400">TVL</span>
-                <span className="text-white font-semibold">$2.4M</span>
+                <span className="text-gray-400">Your Total Staked</span>
+                <span className="text-white font-semibold">{stakingData.totalStaked} USDC</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-400">APY</span>
-                <Badge className="bg-green-600 text-white">12.5%</Badge>
+                <span className="text-gray-400">CC Token Rate</span>
+                <Badge className="bg-green-600 text-white">250% APY</Badge>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-400">Hectares Funded</span>
-                <span className="text-green-400 font-semibold">1,247</span>
+                <span className="text-gray-400">Available Regions</span>
+                <span className="text-green-400 font-semibold">{stakingData.availableRegions.length}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400">Platform Fee</span>
+                <span className="text-blue-400 font-semibold">{stakingData.stakingFee}%</span>
               </div>
             </CardContent>
           </Card>
@@ -270,18 +283,20 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
                   <div className="mt-2 p-2 rounded bg-gray-700/50 border border-gray-600/50">
                     <p className="text-xs text-blue-400 font-medium mb-1">Estimated Impact:</p>
                     <div className="flex justify-between text-xs">
-                      <span className="text-gray-400">Area Protected:</span>
-                      <span className="text-white">{parseFloat(stakeAmount) / 200} hectares</span>
-                    </div>
-                    {selectedRegion.carbon_sequestration_tpy && (
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-400">Carbon Offset:</span>
-                        <span className="text-green-400">
-                          ~{(selectedRegion.carbon_sequestration_tpy / selectedRegion.area_hectares * (parseFloat(stakeAmount) / 200)).toFixed(2)} tons/year
-                        </span>
-                      </div>
-                    )}
+                      <span className="text-gray-400">Area Protected:</span>                  <span className="text-white">{parseFloat(stakeAmount) / 200} hectares</span>
+                </div>
+                {selectedRegion.carbon_sequestration_tpy && (
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-400">Carbon Offset:</span>
+                    <span className="text-green-400">
+                      ~{(selectedRegion.carbon_sequestration_tpy / selectedRegion.area_hectares * (parseFloat(stakeAmount) / 200)).toFixed(2)} tons/year
+                    </span>
                   </div>
+                )}
+                <div className="mt-1 text-xs text-blue-300">
+                  💡 Real staking via smart contract - earn CC tokens over time!
+                </div>
+              </div>
                 )}
               </div>
 
@@ -369,14 +384,18 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
 
               <Button
                 onClick={handleStake}
-                disabled={!stakeAmount || parseFloat(stakeAmount) <= 0 || isPending || isConfirming || !selectedRegion || !isConnected}
+                disabled={!stakeAmount || parseFloat(stakeAmount) <= 0 || isStakingPending || isStakingConfirming || !selectedRegion || !isConnected}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
               >
-                {isPending ? 'Confirming...' : isConfirming ? 'Processing...' : !isConnected ? 'Connect Wallet First' : !selectedRegion ? 'Select Region First' : 'Stake USDC'}
+                {isStakingPending ? 'Confirming...' : 
+                 isStakingConfirming ? 'Processing...' : 
+                 !isConnected ? 'Connect Wallet First' : 
+                 !selectedRegion ? 'Select Region First' : 
+                 needsApproval(stakeAmount) ? 'Approve & Stake USDC' : 'Stake USDC'}
               </Button>
 
               {/* Transaction Status Notifications */}
-              {isPending && (
+              {isStakingPending && (
                 <Alert className="bg-blue-900/30 border-blue-400/30">
                   <Clock className="h-4 w-4 text-blue-400" />
                   <AlertDescription className="text-blue-200">
@@ -385,7 +404,7 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
                 </Alert>
               )}
 
-              {isConfirming && (
+              {isStakingConfirming && (
                 <Alert className="bg-yellow-900/30 border-yellow-400/30">
                   <Clock className="h-4 w-4 text-yellow-400" />
                   <AlertDescription className="text-yellow-200">
@@ -394,13 +413,13 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
                 </Alert>
               )}
 
-              {showSuccess && hash && (
+              {showSuccess && (
                 <Alert className="bg-green-900/30 border-green-400/30">
                   <CheckCircle className="h-4 w-4 text-green-400" />
                   <AlertDescription className="text-green-200">
                     <div className="space-y-2">
                       <div className="flex justify-between items-start">
-                        <div>Staking successful! USDC has been transferred.</div>
+                        <div>Staking successful! USDC has been staked in the contract.</div>
                         <button 
                           onClick={() => setShowSuccess(false)}
                           className="text-green-300 hover:text-green-100 ml-2"
@@ -408,14 +427,9 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
                           ×
                         </button>
                       </div>
-                      <a 
-                        href={`${CONTRACT_CONFIG.BLOCK_EXPLORER}/tx/${hash}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center text-green-300 hover:text-green-100 underline text-sm"
-                      >
-                        View transaction <ExternalLink className="w-3 h-3 ml-1" />
-                      </a>
+                      <div className="text-sm text-green-300">
+                        Check the "Your Stakes" section below for updated information.
+                      </div>
                     </div>
                   </AlertDescription>
                 </Alert>
@@ -440,46 +454,11 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
             </CardContent>
           </Card>
 
-          {/* Environmental Impact Card - Only shown when a region is selected */}
-          {selectedRegion && (
-            <Card className="bg-gray-800 border-gray-700">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-white text-lg flex items-center">
-                  <Leaf className="w-5 h-5 mr-2 text-green-400" />
-                  Environmental Impact
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {selectedRegion.flood_protection_m && (
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Flood Protection</span>
-                    <span className="text-blue-400 font-semibold">{selectedRegion.flood_protection_m}m</span>
-                  </div>
-                )}
-                {selectedRegion.carbon_sequestration_tpy && (
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Carbon Sequestration</span>
-                    <span className="text-green-400 font-semibold">{selectedRegion.carbon_sequestration_tpy} t/yr</span>
-                  </div>
-                )}
-                {selectedRegion.biodiversity_index && (
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Biodiversity Index</span>
-                    <span className="text-yellow-400 font-semibold">{selectedRegion.biodiversity_index.toFixed(2)}</span>
-                  </div>
-                )}
-                {selectedRegion.economic_value_usd && (
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Economic Value</span>
-                    <span className="text-white font-semibold">${(selectedRegion.economic_value_usd / 1000).toFixed(0)}K/yr</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
-
           {/* Your Stakes - Now using StakingInfoCard component */}
           <StakingInfoCard />
+
+          {/* Diagnostic component for debugging */}
+          {process.env.NODE_ENV === 'development' && <StakingDiagnostic />}
         </div>
       </div>
     </>

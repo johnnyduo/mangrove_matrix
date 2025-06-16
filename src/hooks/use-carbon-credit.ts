@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { CONTRACT_CONFIG, CC_TOKEN_ABI } from '@/lib/contracts';
+import { CONTRACT_CONFIG, CC_TOKEN_ABI, STAKING_ABI } from '@/lib/contracts';
 import { formatUnits } from 'viem';
 import { optimismSepolia } from 'wagmi/chains';
 
@@ -34,14 +34,14 @@ export const useCarbonCredit = () => {
     }
   });
 
-  // Get user staking info
+  // Get user staking info from staking contract
   const { data: userStakingData, refetch: refetchStakingInfo } = useReadContract({
-    address: CONTRACT_CONFIG.CC_TOKEN_ADDRESS as `0x${string}`,
-    abi: CC_TOKEN_ABI,
+    address: CONTRACT_CONFIG.STAKING_CONTRACT_ADDRESS as `0x${string}`,
+    abi: STAKING_ABI,
     functionName: 'getUserStakingInfo',
     args: address ? [address] : undefined,
     query: {
-      enabled: !!address && CONTRACT_CONFIG.CC_TOKEN_ADDRESS !== "0x0000000000000000000000000000000000000000",
+      enabled: !!address && CONTRACT_CONFIG.STAKING_CONTRACT_ADDRESS !== "0x0000000000000000000000000000000000000000",
       refetchInterval: 10000, // Refresh every 10 seconds
     }
   });

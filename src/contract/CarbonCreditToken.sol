@@ -21,7 +21,7 @@ contract CarbonCreditToken {
     mapping(address => uint256) public lastRewardTime;
     
     // Constants for calculations
-    uint256 public constant CC_RATE_PER_USDC_PER_YEAR = 25; // 0.025 CC per USDC per year (scaled by 1000)
+    uint256 public constant CC_RATE_PER_USDC_PER_YEAR = 2500; // 2.5 CC per USDC per year (scaled by 1000) - 100x faster for testing
     uint256 public constant HECTARES_PER_USDC = 5; // 0.005 hectares per USDC (scaled by 1000)
     uint256 public constant SECONDS_PER_YEAR = 365 * 24 * 60 * 60;
     
@@ -147,6 +147,31 @@ contract CarbonCreditToken {
         userCCEarned[msg.sender] = 0;
         // Tokens are already minted in _updateRewards, so we just emit event
         emit ClaimRewards(msg.sender, rewards);
+    }
+    
+    // Unstake function - reduces staked amount but doesn't transfer USDC (handled by staking contract)
+    function unstake(address user, uint256 usdcAmount) public onlyStakingContract {
+        require(userStakedAmount[user] >= usdcAmount, "Cannot unstake more than staked");
+        
+        // Update pending rewards before changing stake
+        _updateRewards(user);
+        
+        // Reduce user's stake
+        userStakedAmount[user] -= usdcAmount;
+        
+        // Recalculate hectares supported
+        userHectaresSupported[user] = (userStakedAmount[user] * HECTARES_PER_USDC) / 1000;
+        
+        // Update verification phase
+        if (userStakedAmount[user] >= 1000 * 10**6) { // 1000 USDC (USDC has 6 decimals)
+            userVerificationPhase[user] = 3;
+        } else if (userStakedAmount[user] >= 500 * 10**6) { // 500 USDC
+            userVerificationPhase[user] = 2;
+        } else if (userStakedAmount[user] > 0) {
+            userVerificationPhase[user] = 1;
+        } else {
+            userVerificationPhase[user] = 0; // No stake
+        }
     }
     
     // Get user staking info

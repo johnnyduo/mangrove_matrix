@@ -11,7 +11,7 @@ This directory contains the smart contracts powering the MangroveMatrix AI-enhan
 | Contract | Address | Purpose |
 |----------|---------|---------|
 | **USDC Token** | `0xFa081F90a1dbB9ceEeB910fa7966D2BA0e5EE0A2` | Faucet-enabled USDC for testing and staking |
-| **Carbon Credit Token** | `0x11b13b3cF56c9D353512a6a9dE1e68f962284ba1` | Reward token with staking mechanism |
+| **Carbon Credit Token** | `0x3D66a37681Aff88F4Eb10De239C0F9Cc3E529844` | Reward token with staking mechanism |
 | **Funding Contract** | `0x344a5E8DC5f256c49a1F6b38EE40cDE2f4C03012` | Campaign management and funding |
 | **Platform Treasury** | `0x5ebaddf71482d40044391923BE1fC42938129988` | Contract owner and treasury |
 
