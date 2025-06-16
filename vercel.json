@@ -4,7 +4,6 @@
   "framework": "vite",
   "installCommand": "yarn install",
   "env": {
-    "NODE_ENV": "production",
     "VITE_BUILD_TARGET": "vercel",
     "ESBUILD_BINARY_PATH": "/usr/bin/esbuild"
   },
