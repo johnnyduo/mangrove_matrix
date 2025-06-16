@@ -11,6 +11,7 @@ import { optimismSepolia } from 'wagmi/chains';
 import { MangroveRegion } from '@/types';
 import { contractService } from '@/lib/contractService';
 import { CONTRACT_CONFIG, USDC_ABI } from '@/lib/contracts';
+import { StakingInfoCard } from './StakingInfoCard';
 
 interface StakingPanelProps {
   isOpen: boolean;
@@ -477,41 +478,8 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
             </Card>
           )}
 
-          {/* Your Stakes */}
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-white text-lg flex items-center">
-                <Leaf className="w-5 h-5 mr-2 text-green-400" />
-                Your Stakes
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400">Staked</span>
-                <span className="text-white font-semibold">{stakedAmount} USDC</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400">CC Tokens Earned</span>
-                <span className="text-green-400 font-semibold">+{carbonCredits} CC</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400">Hectares Supported</span>
-                <span className="text-green-400 font-semibold">{(parseFloat(stakedAmount) / 200).toFixed(1)}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400">Verification Phase</span>
-                <span className="text-yellow-400 font-semibold">1/3</span>
-              </div>
-              <Button
-                variant="outline"
-                className="w-full border-green-600 text-green-400 hover:bg-green-600 hover:text-white"
-                size="sm"
-                disabled={!isConnected || parseFloat(carbonCredits) <= 0}
-              >
-                Claim CC Tokens
-              </Button>
-            </CardContent>
-          </Card>
+          {/* Your Stakes - Now using StakingInfoCard component */}
+          <StakingInfoCard />
         </div>
       </div>
     </>

@@ -3,6 +3,8 @@ export const CONTRACT_CONFIG = {
   // OP Sepolia USDC Token - Updated address with no faucet cooldown
   USDC_ADDRESS: "0xFa081F90a1dbB9ceEeB910fa7966D2BA0e5EE0A2", // New USDC contract on OP Sepolia
   FUNDING_ADDRESS: "0x344a5E8DC5f256c49a1F6b38EE40cDE2f4C03012", // Mock funding address for demo
+  CC_TOKEN_ADDRESS: "0x11b13b3cF56c9D353512a6a9dE1e68f962284ba1", // CC Token contract deployed on OP Sepolia
+  STAKING_CONTRACT_ADDRESS: "0x0000000000000000000000000000000000000000", // Simple Staking contract - update after deployment
   
   // For basic staking, we'll use the contract owner address
   OWNER_ADDRESS: "0x5ebaddf71482d40044391923BE1fC42938129988", // Replace with actual owner address
@@ -77,6 +79,85 @@ export const USDC_ABI = [
     "name": "FAUCET_COOLDOWN",
     "inputs": [],
     "outputs": [{ "name": "", "type": "uint256" }],
+    "stateMutability": "view"
+  }
+] as const;
+
+// Carbon Credit Token ABI
+export const CC_TOKEN_ABI = [
+  {
+    "type": "function",
+    "name": "balanceOf",
+    "inputs": [{ "name": "account", "type": "address" }],
+    "outputs": [{ "name": "", "type": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "stake",
+    "inputs": [
+      { "name": "user", "type": "address" },
+      { "name": "usdcAmount", "type": "uint256" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "claimRewards",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "mint",
+    "inputs": [
+      { "name": "to", "type": "address" },
+      { "name": "amount", "type": "uint256" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getUserStakingInfo",
+    "inputs": [{ "name": "user", "type": "address" }],
+    "outputs": [
+      { "name": "stakedAmount", "type": "uint256" },
+      { "name": "ccEarned", "type": "uint256" },
+      { "name": "hectaresSupported", "type": "uint256" },
+      { "name": "verificationPhase", "type": "uint256" },
+      { "name": "pendingRewards", "type": "uint256" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "calculatePendingRewards",
+    "inputs": [{ "name": "user", "type": "address" }],
+    "outputs": [{ "name": "", "type": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "name",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "string" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "symbol",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "string" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "decimals",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint8" }],
     "stateMutability": "view"
   }
 ] as const;
