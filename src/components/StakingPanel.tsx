@@ -21,10 +21,14 @@ interface StakingPanelProps {
 export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelProps) => {
   const { address, isConnected } = useAccount();
   
-  // Get USDC balance only
-  const { data: usdcBalance, error: usdcError, isLoading: usdcLoading } = useBalance({
+  // Get USDC balance with automatic refresh
+  const { data: usdcBalance, error: usdcError, isLoading: usdcLoading, refetch: refetchBalance } = useBalance({
     address,
     token: CONTRACT_CONFIG.USDC_ADDRESS as `0x${string}`,
+    query: {
+      refetchInterval: 5000, // Refresh every 5 seconds
+      staleTime: 2000, // Consider data stale after 2 seconds
+    }
   });
   
   // Contract interaction hooks
@@ -38,6 +42,7 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
   const [carbonCredits, setCarbonCredits] = useState('0.00'); // This would be fetched from contract
   const [showSuccess, setShowSuccess] = useState(false);
   const [txError, setTxError] = useState<string | null>(null);
+  const [lastBalanceUpdate, setLastBalanceUpdate] = useState<Date | null>(null);
 
   // Handle transaction errors with better UX
   useEffect(() => {
@@ -47,10 +52,20 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
     }
   }, [writeError]);
 
+  // Update last balance update time when balance changes
+  useEffect(() => {
+    if (usdcBalance && !usdcLoading) {
+      setLastBalanceUpdate(new Date());
+    }
+  }, [usdcBalance, usdcLoading]);
+
   // Handle successful transaction with better UX
   useEffect(() => {
     if (isConfirmed && hash) {
       setShowSuccess(true);
+      
+      // Refresh balance after successful transaction
+      refetchBalance();
       
       // Update local state to simulate successful staking
       const newStaked = parseFloat(stakedAmount.replace(/,/g, '')) + parseFloat(stakeAmount);
@@ -67,7 +82,7 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
       // Hide success message after 10 seconds
       setTimeout(() => setShowSuccess(false), 10000);
     }
-  }, [isConfirmed, hash, stakeAmount, stakedAmount, carbonCredits]);
+  }, [isConfirmed, hash, stakeAmount, stakedAmount, carbonCredits, refetchBalance]);
 
   // Format USDC balance for display
   const displayBalance = usdcBalance && !usdcError ? 
@@ -75,6 +90,16 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
     usdcLoading ? 'Loading...' :
     usdcError ? `Error: ${usdcError.message || 'Unknown error'}` :
     '0.00 USDC';
+
+  // Format last update time
+  const formatLastUpdate = () => {
+    if (!lastBalanceUpdate) return '';
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - lastBalanceUpdate.getTime()) / 1000);
+    if (diff < 60) return `${diff}s ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    return lastBalanceUpdate.toLocaleTimeString();
+  };
 
   // Function to fetch user data - now simplified since balance comes from wagmi
   const fetchUserData = async () => {
@@ -259,9 +284,33 @@ export const StakingPanel = ({ isOpen, onToggle, selectedRegion }: StakingPanelP
                 )}
               </div>
 
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Balance:</span>
-                <span className="text-white">{isConnected ? displayBalance : 'Not connected'}</span>
+                <div className="flex flex-col items-end">
+                  <div className="flex items-center gap-2">
+                    <span className="text-white">{isConnected ? displayBalance : 'Not connected'}</span>
+                    {isConnected && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => refetchBalance()}
+                        disabled={usdcLoading}
+                        className="h-6 w-6 p-0 text-gray-400 hover:text-white"
+                        title="Refresh balance"
+                      >
+                        <div className={`w-3 h-3 ${usdcLoading ? 'animate-spin' : ''}`}>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                          </svg>
+                        </div>
+                      </Button>
+                    )}
+                  </div>
+                  {isConnected && lastBalanceUpdate && (
+                    <span className="text-xs text-gray-500">Updated {formatLastUpdate()}</span>
+                  )}
+                </div>
               </div>
               
               <div className="flex justify-between text-sm">

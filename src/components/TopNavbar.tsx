@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Leaf, Wallet, Droplets, Clock } from 'lucide-react';
+import { Leaf, Wallet, Droplets, Clock, LogOut } from 'lucide-react';
 import { useAppKit } from '@reown/appkit/react';
 import { useAccount, useDisconnect } from 'wagmi';
 import { useFaucet } from '@/hooks/use-faucet';
@@ -30,6 +30,7 @@ export const TopNavbar = () => {
 
   const handleDisconnect = () => {
     disconnect();
+    toast.success('Wallet disconnected successfully');
   };
 
   const handleFaucetClaim = async () => {
@@ -97,14 +98,23 @@ export const TopNavbar = () => {
         )}
 
         {isConnected ? (
-          <Button 
-            variant="outline" 
-            className="bg-gray-800 text-white border-gray-700 hover:bg-gray-700"
-            onClick={handleDisconnect}
-          >
-            <Wallet className="w-4 h-4 mr-2" />
-            {address && formatAddress(address)}
-          </Button>
+          <div className="flex items-center space-x-2">
+            {/* Wallet Address Display */}
+            <div className="bg-gray-800 text-white border border-gray-700 rounded-md px-3 py-2 text-sm flex items-center">
+              <Wallet className="w-4 h-4 mr-2 text-green-400" />
+              {address && formatAddress(address)}
+            </div>
+            {/* Disconnect Button */}
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="bg-red-600 text-white border-red-700 hover:bg-red-700"
+              onClick={handleDisconnect}
+              title="Disconnect Wallet"
+            >
+              <LogOut className="w-4 h-4" />
+            </Button>
+          </div>
         ) : (
           <Button 
             variant="outline" 
