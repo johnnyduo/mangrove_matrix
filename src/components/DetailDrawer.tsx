@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { X, MapPin, Activity, Shield, Waves } from 'lucide-react';
 import { MangroveRegion } from '@/types';
+import { DetailedReportModal } from './DetailedReportModal';
 
 interface DetailDrawerProps {
   isOpen: boolean;
@@ -11,6 +13,8 @@ interface DetailDrawerProps {
 }
 
 export const DetailDrawer = ({ isOpen, onClose, region }: DetailDrawerProps) => {
+  const [isReportModalOpen, setReportModalOpen] = useState(false);
+
   if (!isOpen || !region) return null;
 
   return (
@@ -99,7 +103,7 @@ export const DetailDrawer = ({ isOpen, onClose, region }: DetailDrawerProps) => 
                 <span className="text-gray-400 text-sm">Economic Value</span>
               </div>
               <span className="text-green-400 font-semibold">
-                {region.economic_value_usdpy ? `$${region.economic_value_usdpy.toLocaleString()}/yr` : 'N/A'}
+                {region.economic_value_usd ? `$${region.economic_value_usd.toLocaleString()}/yr` : 'N/A'}
               </span>
             </div>
           </CardContent>
@@ -110,11 +114,22 @@ export const DetailDrawer = ({ isOpen, onClose, region }: DetailDrawerProps) => 
           <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
             Fund This Region
           </Button>
-          <Button variant="outline" className="w-full border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white">
+          <Button 
+            variant="outline" 
+            className="w-full border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white"
+            onClick={() => setReportModalOpen(true)}
+          >
             View Detailed Report
           </Button>
         </div>
       </div>
+
+      {/* Detailed Report Modal */}
+      <DetailedReportModal 
+        isOpen={isReportModalOpen} 
+        onClose={() => setReportModalOpen(false)} 
+        region={region} 
+      />
     </div>
   );
 };

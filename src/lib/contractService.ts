@@ -262,6 +262,45 @@ export class ContractService {
     return await this._fundingContract.contribute(campaignId, amountBigInt);
   }
 
+  // Faucet Functions
+  async claimFaucet(): Promise<ethers.TransactionResponse> {
+    if (!this._usdcContract) throw new Error('Contract not initialized');
+    
+    try {
+      return await this._usdcContract.faucet();
+    } catch (error: any) {
+      console.error('Faucet claim error:', error);
+      if (error.message?.includes('Please wait 24 hours')) {
+        throw new Error('Please wait 24 hours between faucet requests');
+      }
+      throw new Error('Failed to claim faucet tokens');
+    }
+  }
+
+  async getTimeUntilNextClaim(address: string): Promise<number> {
+    if (!this._usdcContract) throw new Error('Contract not initialized');
+    
+    try {
+      const timeLeft = await this._usdcContract.timeUntilNextClaim(address);
+      return Number(timeLeft);
+    } catch (error) {
+      console.warn('Failed to get faucet cooldown, returning 0:', error);
+      return 0;
+    }
+  }
+
+  async getFaucetAmount(): Promise<string> {
+    if (!this._usdcContract) throw new Error('Contract not initialized');
+    
+    try {
+      const amount = await this._usdcContract.FAUCET_AMOUNT();
+      return formatUSDC(amount);
+    } catch (error) {
+      console.warn('Failed to get faucet amount, returning default:', error);
+      return '1000.00'; // Default faucet amount
+    }
+  }
+
   // Utility functions
   formatUSDC = formatUSDC;
   parseUSDC = parseUSDC;

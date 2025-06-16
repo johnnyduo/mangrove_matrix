@@ -8,10 +8,12 @@ export interface MangroveRegion {
   lat?: number;
   lng?: number;
   health?: number;
+  health_index?: number;
   flood_protection_m?: number;
   carbon_sequestration_tpy?: number;
   biodiversity_index?: number;
   economic_value_usd?: number;
+  economic_value_usdpy?: number;
   area_hectares?: number;
   country?: string;
   protection_level?: string;

@@ -1,13 +1,22 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Leaf, Wallet } from 'lucide-react';
+import { Leaf, Wallet, Droplets, Clock } from 'lucide-react';
 import { useAppKit } from '@reown/appkit/react';
 import { useAccount, useDisconnect } from 'wagmi';
+import { useFaucet } from '@/hooks/use-faucet';
+import { toast } from 'sonner';
 
 export const TopNavbar = () => {
   const { open } = useAppKit();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
+  const { 
+    claimFaucet, 
+    isLoading, 
+    canClaim, 
+    formatTimeRemaining, 
+    faucetAmount 
+  } = useFaucet();
 
   // Format address for display
   const formatAddress = (addr: string) => {
@@ -21,6 +30,18 @@ export const TopNavbar = () => {
 
   const handleDisconnect = () => {
     disconnect();
+  };
+
+  const handleFaucetClaim = async () => {
+    const result = await claimFaucet();
+    
+    if (result.success) {
+      toast.success(result.message, {
+        description: result.txHash ? `Transaction: ${result.txHash.slice(0, 10)}...` : undefined,
+      });
+    } else {
+      toast.error(result.message);
+    }
   };
 
   return (
@@ -46,6 +67,35 @@ export const TopNavbar = () => {
 
       {/* Wallet Connect Button - Real AppKit Integration */}
       <div className="flex items-center space-x-2">
+        {/* Faucet Button - Only show when connected */}
+        {isConnected && (
+          <Button
+            onClick={handleFaucetClaim}
+            disabled={!canClaim || isLoading}
+            variant="outline"
+            size="sm"
+            className={`${
+              canClaim 
+                ? 'bg-blue-600 text-white border-blue-700 hover:bg-blue-700' 
+                : 'bg-gray-700 text-gray-400 border-gray-600'
+            }`}
+          >
+            {isLoading ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+            ) : (
+              <Droplets className="w-4 h-4 mr-2" />
+            )}
+            {canClaim ? (
+              `Faucet ${faucetAmount} USDC`
+            ) : (
+              <>
+                <Clock className="w-4 h-4 mr-1" />
+                {formatTimeRemaining()}
+              </>
+            )}
+          </Button>
+        )}
+
         {isConnected ? (
           <Button 
             variant="outline" 
