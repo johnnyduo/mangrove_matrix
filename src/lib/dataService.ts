@@ -1,5 +1,5 @@
 // Data service to handle large files and fallbacks
-import mockMangroveData from '../data/processed_gmw_mangroves.json';
+// Import removed to avoid build memory issues - data loaded dynamically
 
 export interface MangroveData {
   type: string;
@@ -52,12 +52,15 @@ class DataService {
     }
 
     try {
-      // Use imported mock predictions data
-      const data = mockMangroveData as MangroveData;
-      this.cache.set('mangroveData', data);
-      return data;
+      // Dynamically fetch the large dataset to avoid build memory issues
+      const response = await fetch('/processed_gmw_mangroves.json');
+      if (response.ok) {
+        const data = await response.json() as MangroveData;
+        this.cache.set('mangroveData', data);
+        return data;
+      }
     } catch (error) {
-      console.warn('Mock predictions data not available, using fallback');
+      console.warn('Large dataset not available, using fallback', error);
     }
 
     // Final fallback - minimal hardcoded data
@@ -102,19 +105,22 @@ class DataService {
     dataSource: 'full' | 'sample' | 'fallback';
   }> {
     try {
-      // Check if mock predictions data is available
-      const data = mockMangroveData as MangroveData;
-      if (data && data.features && data.features.length > 0) {
-        const size = data.features.length;
-        // Determine data source based on size
-        if (size >= 50000) {
-          return { fullDataset: true, sampleData: true, dataSource: 'full' };
-        } else if (size > 1000) {
-          return { fullDataset: false, sampleData: true, dataSource: 'sample' };
+      // Check if large dataset is available via fetch
+      const response = await fetch('/processed_gmw_mangroves.json');
+      if (response.ok) {
+        const data = await response.json() as MangroveData;
+        if (data && data.features && data.features.length > 0) {
+          const size = data.features.length;
+          // Determine data source based on size
+          if (size >= 50000) {
+            return { fullDataset: true, sampleData: true, dataSource: 'full' };
+          } else if (size > 1000) {
+            return { fullDataset: false, sampleData: true, dataSource: 'sample' };
+          }
         }
       }
     } catch (error) {
-      console.warn('Mock predictions data check failed');
+      console.warn('Large dataset check failed', error);
     }
 
     return { fullDataset: false, sampleData: false, dataSource: 'fallback' };
