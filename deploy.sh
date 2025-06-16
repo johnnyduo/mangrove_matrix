@@ -19,17 +19,13 @@ else
   echo "✅ Professional GMW dataset found."
 fi
 
-# Remove problematic dependencies from package.json before install
-echo "🔧 Preparing package.json for deployment..."
-npx json -I -f package.json -e "delete this.dependencies['@reown/appkit']; delete this.dependencies['@reown/appkit-adapter-wagmi'];"
-
-# Install remaining dependencies
+# Install dependencies with yarn for better reliability
 echo "📦 Installing dependencies..."
-npm install
+yarn install --frozen-lockfile
 
 # Build the application
 echo "🏗️ Building application..."
-npm run build
+yarn build
 
 if [ -d "dist" ]; then
   echo "✅ Build complete! Deployment bundle ready in 'dist' folder"

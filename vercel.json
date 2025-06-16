@@ -1,8 +1,8 @@
 {
-  "buildCommand": "chmod +x ./deploy.sh && ./deploy.sh",
+  "buildCommand": "npm install && npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "installCommand": "echo 'Dependencies will be installed by the build command'",
+  "installCommand": "npm install",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
