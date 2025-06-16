@@ -51,9 +51,6 @@ MangroveMatrix revolutionizes environmental conservation by combining cutting-ed
 
 #### **Platform Configuration**
 ```solidity
-// Contract Owner / Platform Treasury
-0x5ebaddf71482d40044391923BE1fC42938129988
-
 // Network: Optimism Sepolia (Chain ID: 11155420)
 // Block Explorer: https://sepolia-optimism.etherscan.io
 // RPC Endpoint: https://sepolia.optimism.io
