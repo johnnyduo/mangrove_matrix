@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { X, MapPin, Activity, Shield, Waves } from 'lucide-react';
 import { MangroveRegion } from '@/types';
 import { DetailedReportModal } from './DetailedReportModal';
+import { FundingModal } from './FundingModal';
 
 interface DetailDrawerProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface DetailDrawerProps {
 
 export const DetailDrawer = ({ isOpen, onClose, region }: DetailDrawerProps) => {
   const [isReportModalOpen, setReportModalOpen] = useState(false);
+  const [isFundingModalOpen, setFundingModalOpen] = useState(false);
 
   if (!isOpen || !region) return null;
 
@@ -111,8 +113,11 @@ export const DetailDrawer = ({ isOpen, onClose, region }: DetailDrawerProps) => 
 
         {/* Action Buttons */}
         <div className="space-y-2">
-          <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-            Fund This Region
+          <Button 
+            className="w-full bg-green-600 hover:bg-green-700 text-white"
+            onClick={() => setFundingModalOpen(true)}
+          >
+            Fund This Area
           </Button>
           <Button 
             variant="outline" 
@@ -123,6 +128,13 @@ export const DetailDrawer = ({ isOpen, onClose, region }: DetailDrawerProps) => 
           </Button>
         </div>
       </div>
+
+      {/* Funding Modal */}
+      <FundingModal 
+        isOpen={isFundingModalOpen} 
+        onClose={() => setFundingModalOpen(false)} 
+        region={region} 
+      />
 
       {/* Detailed Report Modal */}
       <DetailedReportModal 

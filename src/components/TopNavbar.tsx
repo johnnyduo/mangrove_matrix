@@ -58,16 +58,14 @@ export const TopNavbar = () => {
         </Badge>
       </div>
 
-      {/* Network Indicator */}
-      <div className="flex items-center space-x-2">
-        <Badge variant="outline" className="bg-gray-800 text-green-400 border-green-400/30">
+      {/* Right Side - Network + Wallet Controls */}
+      <div className="flex items-center space-x-3">
+        {/* Network Indicator */}
+        <Badge variant="outline" className="bg-gray-800 text-green-400 border-green-400/30 text-xs">
           <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
           OP Sepolia
         </Badge>
-      </div>
 
-      {/* Wallet Connect Button - Real AppKit Integration */}
-      <div className="flex items-center space-x-2">
         {/* Faucet Button - Only show when connected */}
         {isConnected && (
           <Button
@@ -87,7 +85,7 @@ export const TopNavbar = () => {
               <Droplets className="w-4 h-4 mr-2" />
             )}
             {canClaim ? (
-              `Faucet ${faucetAmount} USDC`
+              'Faucet'
             ) : (
               <>
                 <Clock className="w-4 h-4 mr-1" />
